@@ -102,25 +102,29 @@ quantidade = 0;
 maiorFatura = 0.0;
 menorFatura = 9999999999999.9;
 valorMedi = 0.0;
-foreach (var fatura in listaFaturas)
+foreach (var faturas in listaFaturas)
 {
-    if (fatura.valor > 0)
+    if ( (Convert.ToDateTime(faturas.data).DayOfWeek != DayOfWeek.Saturday) && (Convert.ToDateTime(faturas.data).DayOfWeek != DayOfWeek.Sunday) )
     {
-        if (fatura.valor > maiorFatura)
+        //para cada dia pode existir N faturas, percorrendo o faturamento diario
+        foreach (var faturaDiaria in listaFaturas.Faturamento)
         {
-            maiorFatura = fatura.valor;
-            dataMaior = fatura.data.toString("dd/MM/yyyy");
-        }
+            if (faturaDiaria.consumo > maiorFatura)
+            {
+                maiorFatura = faturaDiaria.valor;
+                dataMaior = faturas.data.toString("dd/MM/yyyy");
+            }
 
-        if (fatura.valor < menorFatura)
-        {
-            menorFatura = fatura.valor;
-            dataMenor = fatura.data.toString("dd/MM/yyyy");
-        }
+            if (faturaDiaria.consumo < menorFatura)
+            {
+                menorFatura = faturaDiaria.valor;
+                dataMenor = faturas.data.toString("dd/MM/yyyy");
+            }
 
-        //calculo de media
-        valorMedia += fatura.valor;
-        quantidade++;
+            //calculo de media
+            valorMedia += fatura.valor;
+            quantidade++;
+        }
     }
 }
 
@@ -131,13 +135,17 @@ Console.WriteLine($"Maior consumo - Data: {dataMaior}, Consumo: {maiorFatura}");
 Console.WriteLine($"Menor consumo - Data: {dataMenor}, Consumo: {menorFatura}");
 Console.WriteLine($"Dias em que o valor de consumo foi superior a media de consumo.  Media: {valorMedia}");
 
-foreach (var fatura in listaFaturas)
+foreach (var faturas in listaFaturas)
 {
-    if (fatura.valor > 0)
+    if ((Convert.ToDateTime(faturas.data).DayOfWeek != DayOfWeek.Saturday) && (Convert.ToDateTime(faturas.data).DayOfWeek != DayOfWeek.Sunday))
     {
-        if (fatura.valor > valorMedia)
+        //para cada dia pode existir N faturas, percorrendo o faturamento diario
+        foreach (var faturaDiaria in listaFaturas.Faturamento)
         {
-            Console.WriteLine($"Data: {fatura.data.toString("dd/MM/yyyy")} - Consumo: {fatura.valor}");
+            if (faturaDiaria.consumo > valorMedia)
+            {
+                Console.WriteLine($"Data: {fatura.data.toString("dd/MM/yyyy")} - Consumo: {faturaDiaria.consumo}");
+            }
         }
     }
 }
